@@ -1,0 +1,2 @@
+# CLTVideoRecording
+CLTVideoRecording 是基于UIImagePickerController封装的一款可拍照、录像、选择相册的组件，选择后的照片和录像通过block回调
