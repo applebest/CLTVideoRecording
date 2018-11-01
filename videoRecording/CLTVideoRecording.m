@@ -113,8 +113,8 @@
             break;
             
         case imagePickerUseType_ChoosePhotos:{
+//            self.imagePicker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
             self.imagePicker.sourceType =  UIImagePickerControllerSourceTypePhotoLibrary;
-            self.imagePicker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
         }
             break;
             
