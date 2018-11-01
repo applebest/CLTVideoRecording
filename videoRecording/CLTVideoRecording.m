@@ -70,7 +70,7 @@
                     return;
                 }];
                 [alertController addAction:comfirmAction];
-                [self.viewController presentViewController:alertController animated:YES completion:nil];
+                [viewController presentViewController:alertController animated:YES completion:nil];
                 
             }
             else {
@@ -89,7 +89,7 @@
                 return;
             }];
             [alertController addAction:comfirmAction];
-            [self.viewController presentViewController:alertController animated:YES completion:nil];
+            [viewController presentViewController:alertController animated:YES completion:nil];
             
         }
         else {
