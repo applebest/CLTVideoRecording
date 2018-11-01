@@ -25,9 +25,11 @@
 
 @property (nonatomic,strong) NSMutableArray *videoArr; // 装视频数据
 
-@property (nonatomic,assign) BOOL isVideo; // 是否是视频
+@property (nonatomic,copy) imageBlock  imageBlock;
 
-@property (nonatomic,copy) dataBlock  videoRecordingBlock;
+@property (nonatomic,copy) videoBlock  videoBlock;
+
+
 
 @property (nonatomic, strong) UIViewController        *viewController;
 
@@ -48,16 +50,17 @@
         _imagePicker.delegate = self;
         _imageArr = [NSMutableArray array];
         _videoArr = [NSMutableArray array];
-        _isVideo = NO;
         
     }
     return self;
 }
 
-- (void)getVideoRecordingDataWithViewController:(UIViewController *)viewController SourceType:(UIImagePickerControllerSourceType)sourceType CameraCaptureMode:(UIImagePickerControllerCameraCaptureMode )model VideoRecordingDataBlock:(dataBlock )dataBlock
-{
+
+- (void)getVideoRecordingDataWithViewController:(UIViewController *)viewController useType:(imagePickerUseType)type imageBlock:(imageBlock)imageBlock videoBlock:(videoBlock)videoBlock{
     
-    if (sourceType == UIImagePickerControllerSourceTypeCamera ) {
+    
+    // 拍照 录像 获取权限
+    if (type & imagePickerUseType_TakingPictures || type & imagePickerUseType_RecordingVideo ) {
         
         if (![self imagePickerControlerIsAvailabelToCamera]) {
             
@@ -97,29 +100,46 @@
     }
     
     self.viewController = viewController;
-    self.videoRecordingBlock = dataBlock;
+    self.videoBlock  = videoBlock;
+    self.imageBlock = imageBlock;
     
-    self.imagePicker.sourceType = sourceType;
+    
+    switch (type) {
+        case imagePickerUseType_TakingPictures:{
+             self.imagePicker.sourceType =  UIImagePickerControllerSourceTypeCamera;
+             self.imagePicker.mediaTypes =  [NSArray arrayWithObjects:(NSString *)kUTTypeImage, nil];
+             self.imagePicker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+        }
+            break;
+            
+        case imagePickerUseType_ChoosePhotos:{
+            self.imagePicker.sourceType =  UIImagePickerControllerSourceTypePhotoLibrary;
+            self.imagePicker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+        }
+            break;
+            
+        case imagePickerUseType_RecordingVideo:{
+            self.imagePicker.sourceType =  UIImagePickerControllerSourceTypeCamera;
+            self.imagePicker.mediaTypes =  [NSArray arrayWithObjects:(NSString *)kUTTypeMovie, nil];
+            self.imagePicker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
 
-    self.imagePicker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
-    
-    
-    if (sourceType == UIImagePickerControllerSourceTypeCamera) {
-        
-        
-        self.imagePicker.cameraCaptureMode = model;
-        self.imagePicker.cameraDevice = UIImagePickerControllerCameraDeviceRear;
-        
-        self.imagePicker.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
+        }
+        default:
+            break;
     }
+
     
+//        self.imagePicker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
     
     if (self.viewController.presentedViewController == nil) {
-    
+        
         [self.viewController presentViewController:self.imagePicker animated:YES completion:nil];
     }
     
 }
+
+
+
 
 
 // 判断硬件是否支持拍照
@@ -193,13 +213,8 @@
     else if ([mediaType isEqualToString:(NSString *)kUTTypeImage])
     {
         UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
-        self.isVideo = NO;
         [self.imageArr addObject:UIImageJPEGRepresentation(image, 0.5)];
-        
-        if (self.videoRecordingBlock) {
-            self.videoRecordingBlock(self.imageArr,self.isVideo,self.videoArr);
-        }
-        
+        !self.imageBlock?:self.imageBlock(self.imageArr);
         
     }
     
@@ -278,15 +293,8 @@
             return;
         }
         
-        
     }else {
-        
-        self.isVideo = YES;
-        
-        if (self.videoRecordingBlock) {
-            self.videoRecordingBlock(self.imageArr,self.isVideo,self.videoArr);
-        }
-        
+        !self.videoBlock?:self.videoBlock(self.videoArr);
     }
 }
 

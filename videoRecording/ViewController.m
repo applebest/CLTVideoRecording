@@ -48,15 +48,15 @@
     
     
     //  UIImagePickerControllerSourceTypePhotoLibrary && UIImagePickerControllerCameraCaptureModePhoto   相册
-    
-    [self.videoRecordingServe getVideoRecordingDataWithViewController:self SourceType:UIImagePickerControllerSourceTypeCamera CameraCaptureMode:UIImagePickerControllerCameraCaptureModePhoto VideoRecordingDataBlock:^(NSMutableArray *imageArr, BOOL isVideo, NSMutableArray *videoArr) {
-       
-        
-        NSLog(@"%@ %d %@",imageArr,isVideo,videoArr);
 
+    [self.videoRecordingServe getVideoRecordingDataWithViewController:self useType:imagePickerUseType_TakingPictures imageBlock:^(NSMutableArray *imageArr) {
+
+        NSLog(@"image %@",imageArr);
+
+    } videoBlock:^(NSMutableArray *videoArr) {
+        NSLog(@"video %@",videoArr);
     }];
-       
-
+    
      
     
      
